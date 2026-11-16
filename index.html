@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SehatLn – Pengingat Hidup Sehat</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Figtree:wght@400;600&display=swap">
+<style>
+:root{--bg:#F1F7EF;--card:#fff;--ink:#14301F;--mut:#5B7563;--line:#DCE8DD;--g:#1F7A4D;--gs:#DFF3E4;--water:#2F8FD8;--onp:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1913;--card:#16251C;--ink:#E6F2E9;--mut:#90AA98;--line:#25392C;--g:#4FC48A;--gs:#1B3A2A;--water:#5DB0F0;--onp:#0E1913;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 Figtree,system-ui,sans-serif}
+h1,h2,h3{font-family:Outfit,system-ui,sans-serif;margin:0}
+.app{max-width:480px;margin:0 auto;padding:20px 16px 96px}
+header h1{font-size:28px}
+header p{margin:2px 0 18px;color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px}
+.water{display:flex;gap:16px;align-items:center}
+.ring{position:relative;width:128px;height:128px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-family:Outfit}
+.ring b{font-size:24px}.ring small{color:var(--mut);font:400 12px Figtree}
+.wbtn{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button{font:600 15px Figtree,sans-serif;border:0;border-radius:14px;padding:11px 16px;cursor:pointer;background:var(--gs);color:var(--g)}
+button.p{background:var(--g);color:var(--onp)}
+button.d{background:transparent;color:var(--mut);padding:8px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.dot{width:38px;height:38px;border-radius:12px;display:grid;place-content:center;font-size:19px;flex:none;background:var(--gs)}
+.row .t{flex:1;min-width:0}.row .t b{display:block}.row .t span{color:var(--mut);font-size:14px}
+.tm{font:700 17px Outfit;font-variant-numeric:tabular-nums}
+.row.done .t b{text-decoration:line-through;color:var(--mut)}
+.row.off{opacity:.5}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:none;padding:0;color:var(--onp);font-size:14px}
+.row.done .chk{background:var(--g);border-color:var(--g)}
+.empty{color:var(--mut);padding:8px 0}
+h2{font-size:19px;margin-bottom:4px}.sub{color:var(--mut);font-size:14px;margin:0 0 8px}
+input[type=text],input[type=time],input[type=number]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 10px;min-width:0}
+input[type=text]{flex:1}input[type=number]{width:92px}
+.f{display:flex;align-items:center;gap:10px;margin:8px 0}.f label{flex:1}
+.sw{position:relative;width:46px;height:26px;flex:none}
+.sw input{opacity:0;position:absolute;inset:0;margin:0;cursor:pointer;z-index:1}
+.sw i{position:absolute;inset:0;background:var(--line);border-radius:20px;transition:.2s}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked+i{background:var(--g)}.sw input:checked+i::after{left:23px}
+.sw input:focus-visible+i{outline:3px solid var(--water)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px))}
+nav div{max-width:480px;margin:0 auto;display:flex;gap:8px}
+nav button{flex:1;background:none;color:var(--mut)}nav button[aria-current=true]{background:var(--gs);color:var(--g)}
+#toast{position:fixed;left:12px;right:12px;top:12px;max-width:456px;margin:0 auto;z-index:40;display:none;align-items:center;gap:10px;background:var(--g);color:var(--onp);border-radius:16px;padding:12px 14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#toast.on{display:flex}#toast span{flex:1}#toast button{background:transparent;color:inherit;padding:4px 8px}
+#alarm{position:fixed;inset:0;background:rgba(8,24,15,.82);display:none;place-items:center;padding:20px;z-index:50}
+#alarm.on{display:grid}
+.box{background:var(--card);border-radius:28px;padding:28px 22px;width:100%;max-width:360px;text-align:center}
+.bell{font-size:56px;display:inline-block;animation:ring .8s infinite}
+@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(-16deg)}40%{transform:rotate(14deg)}60%{transform:rotate(-10deg)}80%{transform:rotate(8deg)}}
+@media (prefers-reduced-motion:reduce){.bell{animation:none}}
+.box h2{font-size:26px;margin-top:6px}.box .big{font:700 40px Outfit;color:var(--g);margin:2px 0}
+.box button{width:100%;margin-top:10px;padding:14px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><h1>SehatLn 🌿</h1><p id="hi"></p></header>
+<main id="main"></main>
+</div>
+<nav><div><button data-tab="home" aria-current="true">Hari ini</button><button data-tab="set">Atur jadwal</button></div></nav>
+<div id="toast" role="status" aria-live="polite"><span id="tmsg"></span><button id="tx" aria-label="Tutup pengingat">✕</button></div>
+<div id="alarm" role="alertdialog" aria-modal="true" aria-labelledby="at"><div class="box">
+<div class="bell" id="ai">⏰</div><div class="big" id="atime"></div><h2 id="at"></h2><p id="am" class="sub"></p>
+<button class="p" id="ok"></button><button id="snz">Tunda 5 menit</button></div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ICON={MAKAN:'🍽️',OLAHRAGA:'🏃',BANGUN:'🌅',TIDUR:'🌙',AIR:'💧'};
+const MSG={MAKAN:'Duduk dulu, makan pelan-pelan.',OLAHRAGA:'Saatnya bergerak. Badanmu akan berterima kasih.',BANGUN:'Selamat pagi! Mulai hari dengan segelas air.',TIDUR:'Letakkan ponsel dan istirahat.',AIR:'Minum segelas air putih sekarang.'};
+const OK={MAKAN:'Sudah makan',OLAHRAGA:'Sudah olahraga',BANGUN:'Sudah bangun',TIDUR:'Siap tidur',AIR:'Sudah minum 1 gelas'};
+const STATUS={off:'Alarm mati',terlewat:'Terlewat',aktif:'Alarm aktif'};
+
+let S=null, tab='home', sig='', alarmKey='', lastPre=null, beep=null, ac=null, toastT=null;
+
+/* ---------- komunikasi dengan server Java ---------- */
+function greeting(){
+  const h=new Date().getHours();
+  return (h<11?'Selamat pagi':h<15?'Selamat siang':h<19?'Selamat sore':'Selamat malam')+'. Jaga ritme harianmu.';
+}
+function online(b){ $('#hi').textContent=b?greeting():'Tidak terhubung ke server Java. Pastikan SehatLnWeb masih berjalan.'; }
+async function api(path,data){
+  try{
+    const opt=data?{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data)}:{};
+    const r=await fetch('/api/'+path,opt);
+    const s=await r.json();
+    online(true);
+    return s;
+  }catch(e){ online(false); return null; }
+}
+async function act(path,data){ const s=await api(path,data||{}); if(s&&!s.error)apply(s,true); }
+
+function apply(s,force){
+  S=s;
+  const {jam,...rest}=s, ns=JSON.stringify(rest);
+  handleAlarm(s.alarm);
+  handlePre(s);
+  if(force||(tab==='home'&&ns!==sig)){ sig=ns; render(); }
+}
+
+/* ---------- tampilan ---------- */
+function renderHome(){
+  const w=S, pct=Math.min(1,w.ml/w.goal), C=2*Math.PI*54;
+  const glasses=Math.ceil(w.goal/w.glass);
+  const sisa=Math.max(0,Math.ceil((w.goal-w.ml)/w.glass));
+  $('#main').innerHTML=`
+  <section class="card water">
+   <div class="ring"><svg width="128" height="128" viewBox="0 0 128 128"><circle cx="64" cy="64" r="54" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="64" cy="64" r="54" fill="none" stroke="var(--water)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/></svg>
+   <div class="c"><b>${w.ml} ml</b><small>dari ${w.goal} ml</small></div></div>
+   <div><h2>Minum hari ini</h2><p class="sub">${pct>=1?'Target tercapai. Kerja bagus!':'Sisa '+sisa+' dari '+glasses+' gelas'}</p>
+   <div class="wbtn"><button class="p" data-act="drink">+ ${w.glass} ml</button><button data-act="undrink" aria-label="Kurangi satu gelas">−</button></div></div>
+  </section>
+  <section class="card"><h2>Jadwal hari ini</h2>
+  ${S.jadwal.map(x=>`<div class="row ${x.selesai?'done':''} ${x.aktif?'':'off'}"><div class="dot">${ICON[x.jenis]}</div><div class="t"><b>${esc(x.nama)}</b><span>${STATUS[x.status]}</span></div><div class="tm">${x.jam}</div><button class="chk" data-done="${x.id}" aria-label="Tandai selesai: ${esc(x.nama)}">${x.selesai?'✓':''}</button></div>`).join('')||'<p class="empty">Belum ada jadwal. Buka “Atur jadwal” untuk menambah.</p>'}
+  </section>
+  <button data-act="test" style="width:100%">Coba bunyi alarm</button>`;
+}
+
+function renderSet(){
+  const sw=(attr,on)=>`<span class="sw"><input type="checkbox" ${attr} ${on?'checked':''} aria-label="Alarm aktif"><i></i></span>`;
+  const lst=(jenis,ph)=>{
+    const a=S.jadwal.filter(x=>x.jenis===jenis);
+    return a.map(m=>`<div class="f"><input type="text" value="${esc(m.nama)}" data-upd="${m.id}:nama" aria-label="Nama"><input type="time" value="${m.jam}" data-upd="${m.id}:jam" aria-label="Jam">${sw('data-tog="'+m.id+'"',m.aktif)}<button class="d" data-del="${m.id}" aria-label="Hapus ${esc(m.nama)}">✕</button></div>`).join('')||`<p class="empty">${ph}</p>`;
+  };
+  $('#main').innerHTML=`
+  <section class="card"><h2>🍽️ Jam makan</h2><p class="sub">Tambah sebanyak yang kamu mau, atur jamnya bebas.</p>${lst('MAKAN','Belum ada jam makan.')}<button data-add="MAKAN">+ Tambah jam makan</button></section>
+  <section class="card"><h2>💧 Target minum</h2><p class="sub">Alarm minum berulang selama kamu terjaga sampai target tercapai.</p>
+   <div class="f"><label for="wg">Target per hari (ml)</label><input id="wg" type="number" min="250" step="50" value="${S.goal}" data-k="goal"></div>
+   <div class="f"><label for="wc">Ukuran gelas (ml)</label><input id="wc" type="number" min="50" step="10" value="${S.glass}" data-k="glass"></div>
+   <div class="f"><label for="wi">Ingatkan tiap (menit)</label><input id="wi" type="number" min="1" step="5" value="${S.interval}" data-k="interval"></div>
+   <div class="f"><label>Alarm minum aktif</label>${sw('data-k="waterOn"',S.waterOn)}</div></section>
+  <section class="card"><h2>🏃 Jam olahraga</h2>${lst('OLAHRAGA','Belum ada jam olahraga.')}<button data-add="OLAHRAGA">+ Tambah jam olahraga</button></section>
+  <section class="card"><h2>🌙 Jam tidur</h2>
+   <div class="f"><label for="bd">Waktu tidur</label><input id="bd" type="time" value="${S.bed}" data-k="bed">${sw('data-k="bedOn"',S.bedOn)}</div>
+   <div class="f"><label for="wk">Waktu bangun</label><input id="wk" type="time" value="${S.wake}" data-k="wake">${sw('data-k="wakeOn"',S.wakeOn)}</div></section>
+  <section class="card"><h2>⏳ Pengingat awal</h2><p class="sub">Notifikasi muncul sebelum jadwal. Saat jamnya tiba, pop up alarm menyala.</p>
+   <div class="f"><label for="pm">Ingatkan sebelum (menit)</label><input id="pm" type="number" min="1" max="120" value="${S.preMin}" data-k="preMin"></div>
+   <div class="f"><label>Pengingat awal aktif</label>${sw('data-k="preOn"',S.preOn)}</div></section>
+  <section class="card"><h2>Notifikasi</h2><p class="sub">Alarm muncul sebagai pop-up saat halaman terbuka. Aktifkan notifikasi agar tetap terlihat saat tab di latar belakang.</p><button data-act="notif">Aktifkan notifikasi</button></section>`;
+}
+
+function render(){
+  if(!S)return;
+  document.querySelectorAll('nav [data-tab]').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===tab));
+  tab==='home'?renderHome():renderSet();
+}
+
+/* ---------- event ---------- */
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.k){ act('settings',{[t.dataset.k]:t.type==='checkbox'?String(t.checked):t.value}); }
+  else if(t.dataset.tog){ act('toggle',{id:t.dataset.tog}); }
+  else if(t.dataset.upd){ const [id,f]=t.dataset.upd.split(':'); act('update',{id,[f]:t.value}); }
+});
+document.addEventListener('click',e=>{
+  unlockAudio();
+  const t=e.target.closest('button'); if(!t)return;
+  if(t.dataset.tab){ tab=t.dataset.tab; render(); window.scrollTo(0,0); }
+  else if(t.dataset.done){ act('done',{id:t.dataset.done}); }
+  else if(t.dataset.add){ act('add',{jenis:t.dataset.add,nama:t.dataset.add==='MAKAN'?'Makan baru':'Olahraga baru',jam:'12:00'}); }
+  else if(t.dataset.del){ act('delete',{id:t.dataset.del}); }
+  else if(t.dataset.act==='drink'){ act('drink'); }
+  else if(t.dataset.act==='undrink'){ act('undrink'); }
+  else if(t.dataset.act==='test'){ act('test'); }
+  else if(t.dataset.act==='notif'){
+    if('Notification' in window) Notification.requestPermission().then(r=>{t.textContent=r==='granted'?'Notifikasi aktif ✓':'Notifikasi ditolak browser'});
+    else t.textContent='Browser tidak mendukung';
+  }
+});
+
+/* ---------- suara ---------- */
+function unlockAudio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume()}catch(e){}}
+function tone(f,d,t){try{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.35,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+function chime(){if(!ac)return;const t=ac.currentTime;tone(880,.18,t);tone(1175,.18,t+.22);tone(880,.18,t+.44);tone(1175,.3,t+.66)}
+function vib(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+
+/* ---------- alarm (data dari Java) ---------- */
+function handleAlarm(a){
+  const key=a?a.label+'|'+a.jam:'';
+  if(key===alarmKey)return;
+  alarmKey=key;
+  clearInterval(beep); vib(0);
+  if(!a){ $('#alarm').classList.remove('on'); return; }
+  $('#ai').textContent=ICON[a.jenis]; $('#atime').textContent=a.jam;
+  $('#at').textContent=a.label; $('#am').textContent=MSG[a.jenis];
+  $('#ok').textContent=OK[a.jenis];
+  $('#alarm').classList.add('on'); $('#ok').focus();
+  chime(); vib([300,150,300]);
+  beep=setInterval(()=>{chime();vib([300,150,300])},2200);
+  if(document.hidden&&'Notification' in window&&Notification.permission==='granted'){try{new Notification(a.label,{body:MSG[a.jenis]})}catch(e){}}
+}
+$('#ok').onclick=()=>{ clearInterval(beep); vib(0); $('#alarm').classList.remove('on'); act('alarm/ok'); };
+$('#snz').onclick=()=>{ clearInterval(beep); vib(0); $('#alarm').classList.remove('on'); act('alarm/snooze'); };
+
+/* ---------- pengingat awal (data dari Java) ---------- */
+function handlePre(s){
+  if(lastPre===null){ lastPre=s.preSeq; return; }
+  if(s.preSeq===lastPre)return;
+  lastPre=s.preSeq;
+  const msg='⏳ '+s.preMsg;
+  $('#tmsg').textContent=msg; $('#toast').classList.add('on');
+  clearTimeout(toastT); toastT=setTimeout(()=>$('#toast').classList.remove('on'),15000);
+  try{if(ac){const t=ac.currentTime;tone(660,.2,t);tone(880,.25,t+.25)}}catch(e){}
+  vib(200);
+  if('Notification' in window&&Notification.permission==='granted'){try{new Notification('Sebentar lagi',{body:msg})}catch(e){}}
+}
+$('#tx').onclick=()=>$('#toast').classList.remove('on');
+
+/* ---------- mulai: tanya server Java tiap detik ---------- */
+$('#hi').textContent=greeting();
+api('state').then(s=>{ if(s)apply(s,true); });
+setInterval(()=>api('state').then(s=>{ if(s&&!s.error)apply(s,false); }),1000);
+</script>
+</body>
+</html>
